@@ -50,6 +50,7 @@ router.post("/get-distance", middlewareAuth, async (req, res) => {
         return res.json({
             success: false,
             message: "Something wrong.",
+            data: 0,
         })
     }
 
@@ -57,6 +58,31 @@ router.post("/get-distance", middlewareAuth, async (req, res) => {
         success: true,
         message: "Success",
         data: distance,
+    })
+})
+
+router.post("/get-priority", middlewareAuth, async (req, res) => {
+    let body = req.body
+
+    let distance = body.distance
+    let weight = body.weight
+
+    let priority = 0
+
+    try {
+        priority = Math.ceil(distance * 0.6 + weight * 0.4)
+    } catch (error) {
+        return res.json({
+            success: false,
+            message: "Something wrong.",
+            data: priority
+        })
+    }
+
+    return res.json({
+        success: true,
+        message: "Success",
+        data: priority,
     })
 })
 
