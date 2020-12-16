@@ -64,9 +64,9 @@ router.post("/get-distance", middlewareAuth, async (req, res) => {
 router.post("/get-priority", middlewareAuth, async (req, res) => {
     let body = req.body
 
-    let distance = body.distance
-    let weight = body.weight
-    let deadline_pickup = body.deadline_pickup
+    let distance = body.distance || 0
+    let weight = body.weight || 0
+    let deadline_pickup = body.deadline_pickup || 0
 
     let priority = 0
 
@@ -78,8 +78,36 @@ router.post("/get-priority", middlewareAuth, async (req, res) => {
         - ca chiều: trước 14h: trọng số 3, trước 16h: trọng số 2, trong ca làm việc chiều - trước 19h: trọng số 1
         priority: trọng số deadline_pickup*3 + trọng số distance*2 + trọng số weight*1
     */
+    let weight_point = weight > 5 ? 2 : 1
+
+    let distance_point = 0
+    if (distance > 5) {
+        distance_point = 3
+    } else if (distance <= 5 || distance > 2) {
+        distance_point = 2
+    } else {
+        distance_point = 1
+    }
+
+    let deadline_pickup_point = 1
+    if (deadline_pickup <= 9) {
+        deadline_pickup_point = 3
+    } else if (deadline_pickup <= 10) {
+        deadline_pickup_point = 2
+    } else if (deadline_pickup <= 11) {
+        deadline_pickup_point = 1
+    } else if (deadline_pickup <= 14) {
+        deadline_pickup_point = 3
+    } else if (deadline_pickup <= 16) {
+        deadline_pickup_point = 2
+    } else if (deadline_pickup <= 19) {
+        deadline_pickup_point = 1
+    } else {
+        deadline_pickup_point = 3
+    }
+
     try {
-        priority = deadline_pickup * 3 + distance * 2 + weight * 1
+        priority = deadline_pickup * deadline_pickup_point + distance * distance_point + weight * weight_point
     } catch (error) {
         return res.json({
             success: false,
