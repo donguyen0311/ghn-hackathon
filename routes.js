@@ -66,16 +66,25 @@ router.post("/get-priority", middlewareAuth, async (req, res) => {
 
     let distance = body.distance
     let weight = body.weight
+    let deadline_pickup = body.deadline_pickup
 
     let priority = 0
 
+    /** 
+        weight: 1-5kg: trọng số 1, >5 : trọng số 2
+        distance: <=2km: trọng số 1, 2 - 5km: trọng số 2, >5km: trọng số 3
+        deadline_pickup: 
+        - ca sáng: trước 9h: trọng số 3, trước 10h: trọng số 2, trong ca làm việc sáng - trước 11h: trọng số 1
+        - ca chiều: trước 14h: trọng số 3, trước 16h: trọng số 2, trong ca làm việc chiều - trước 19h: trọng số 1
+        priority: trọng số deadline_pickup*3 + trọng số distance*2 + trọng số weight*1
+    */
     try {
-        priority = Math.ceil(distance * 0.6 + weight * 0.4)
+        priority = deadline_pickup * 3 + distance * 2 + weight * 1
     } catch (error) {
         return res.json({
             success: false,
             message: "Something wrong.",
-            data: priority
+            data: priority,
         })
     }
 
