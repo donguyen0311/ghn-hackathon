@@ -83,7 +83,7 @@ router.post("/get-priority", middlewareAuth, async (req, res) => {
     let distance_point = 0
     if (distance > 5) {
         distance_point = 3
-    } else if (distance <= 5 || distance > 2) {
+    } else if (distance <= 5 && distance > 2) {
         distance_point = 2
     } else {
         distance_point = 1
