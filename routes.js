@@ -107,7 +107,7 @@ router.post("/get-priority", middlewareAuth, async (req, res) => {
     }
 
     try {
-        priority = deadline_pickup_point * 3 + distance_point * 2 + weight_point
+        priority = deadline_pickup_point * 2 + distance_point + weight_point
     } catch (error) {
         return res.json({
             success: false,
